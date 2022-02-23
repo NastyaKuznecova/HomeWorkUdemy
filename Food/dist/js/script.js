@@ -138,7 +138,7 @@ window.addEventListener("DOMContentLoaded", () => {
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
             openModal();
-            window.removeEventListener("scroll", showModalByScroll); 
+            window.removeEventListener("scroll", showModalByScroll);
             //удал откр мод  окна после первого долистывания до конца стр
         }
     }
@@ -146,25 +146,37 @@ window.addEventListener("DOMContentLoaded", () => {
 
     //Используем классы для карточек 
     class MenuCard {
-        constructor(src, alt, title, descr, price, parentSelector) {
+        constructor(src, alt, title, descr, price, parentSelector, ...classes) {
+            //рест оператор созд массив с классами кот могут быть\не быть
             this.src = src;
             this.alt = alt;
             this.title = title;
             this.descr = descr;
             this.price = price;
-            this.parent = document.querySelector(parentSelector);
+            this.classes = classes;
+            this.parent = document.querySelector(parentSelector); //в свойстве не знаение а ДОМ элемент
             this.transfer = 27;
             this.changeToUAH();
         }
 
         changeToUAH() {
             this.price = this.price * this.transfer;
-        }
+        } //конвертация валют с доллара в грн
 
         render() {
             const element = document.createElement('div');
+            //созд новый элем на странице div
+            if (this.classes.length === 0) { // если вдруг класс забыли написать
+                this.classes.push('menu__item');
+                // или меняем содержимое переменной и заменяем массив на строку  this.classes = "menu__item";
+                element.classList.add(this.classes);
+            } else {
+                this.classes.forEach(className => {
+                    element.classList.add(className);
+                }); //добавляю к элементу каждый класс из массива 
+            }
+            //созд внутренность diva
             element.innerHTML = `
-                <div class="menu__item">
                     <img src=${this.src} alt=${this.alt}>
                     <h3 class="menu__item-subtitle">${this.title}</h3>
                     <div class="menu__item-descr">${this.descr}</div>
@@ -173,13 +185,12 @@ window.addEventListener("DOMContentLoaded", () => {
                         <div class="menu__item-cost">Цена:</div>
                         <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
                     </div>
-                </div>
             `;
-            this.parent.append(element);
+            this.parent.append(element); //в конец ДОМ элемента вставл наш новый элемент
         }
     }
-   const infoCard1 = new MenuCard(
-        "img/tabs/vegy.jpg", 
+    const infoCard1 = new MenuCard(
+        "img/tabs/vegy.jpg",
         "vegy",
         'Меню "Фитнес"',
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
@@ -190,7 +201,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // или если больше не нужно будет далее использовать этот объект то - new MenyCard().render();
 
     const infoCard2 = new MenuCard(
-        "img/tabs/elite.jpg", 
+        "img/tabs/elite.jpg",
         "elite",
         'Меню “Премиум”',
         'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
@@ -200,7 +211,7 @@ window.addEventListener("DOMContentLoaded", () => {
     infoCard2.render();
 
     const infoCard3 = new MenuCard(
-        "img/tabs/post.jpg", 
+        "img/tabs/post.jpg",
         "post",
         'Меню "Постное"',
         'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
